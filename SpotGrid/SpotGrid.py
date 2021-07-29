@@ -5,120 +5,119 @@ from SpotGrid.Spot import Spot
 
 class SpotGrid:
     def __init__(self, cols, rows, scr, s, offset):
-        self._cols = cols
-        self._rows = rows
-        self._screen = scr
-        self._offset = offset
-        self._grid_width = s[0]
-        self._grid_height = s[1]
-        self._sp_width = self._grid_width // cols
-        self._spots = [[0 for r in range(rows)] for c in range(cols)]
+        self.cols = cols
+        self.rows = rows
+        self.screen = scr
+        self.offset = offset
+        self.grid_width = s[0]
+        self.grid_height = s[1]
+        self.sp_width = self.grid_width // cols
+        self.spots = [[0 for r in range(rows)] for c in range(cols)]
         self._grid_on = False
         self._grid_color = None
-        self._diagonal = False
-        self._items = []
-        self._bg = None
+        self.items = []
+        self.background = None
         for r in range(rows):
             for c in range(cols):
-                self._spots[c][r] = Spot(c, r, self._sp_width)
+                self.spots[c][r] = Spot(c, r, self.sp_width)
 
     def draw_grid(self):
-        for r in range(self._rows + 1):
-            for c in range(self._cols + 1):
-                pygame.draw.line(self._screen, self._grid_color, (self._offset.x, r * self._sp_width + self._offset.y), (self._grid_width + self._offset.x, r * self._sp_width + self._offset.y))
-                pygame.draw.line(self._screen, self._grid_color, (c * self._sp_width + self._offset.x, self._offset.y), (c * self._sp_width + self._offset.x, self._grid_height + self._offset.y))
+        for r in range(self.rows + 1):
+            for c in range(self.cols + 1):
+                pygame.draw.line(self.screen, self.grid_color, (self.offset.x, r * self.sp_width + self.offset.y), (self.grid_width + self.offset.x, r * self.sp_width + self.offset.y))
+                pygame.draw.line(self.screen, self.grid_color, (c * self.sp_width + self.offset.x, self.offset.y), (c * self.sp_width + self.offset.x, self.grid_height + self.offset.y))
 
     def draw_background(self):
-        self._screen.blit(pygame.transform.scale(self._bg, (self._grid_width, self._grid_height)), (self._offset.x, self._offset.y))
+        self.screen.blit(pygame.transform.scale(self.background, (self.grid_width, self.grid_height)), (self.offset.x, self.offset.y))
 
     def draw_spots(self):
-        for r in range(self._rows):
-            for c in range(self._cols):
+        for r in range(self.rows):
+            for c in range(self.cols):
                 is_item = False
                 ids = self.get_item_ids()
                 try:
-                    item_index = ids.index(self._spots[c][r].id)
+                    item_index = ids.index(self.spots[c][r].id)
                     is_item = True
                 except Exception:
                     is_item = False
 
                 if is_item:
-                    self._items[item_index].draw(self._screen, c * self._sp_width + self._offset.x, r * self._sp_width + self._offset.y);
+                    self.items[item_index].draw(self.screen, c * self.sp_width + self.offset.x, r * self.sp_width + self.offset.y);
                 else:
                     pass  # Transparent
 
     def draw(self):
-        if self._bg is not None:
+        if self.background is not None:
             self.draw_background()
         self.draw_spots()
-        if self._grid_on:
+        if self.grid_on:
             self.draw_grid()
 
     def get_spot(self, x, y):
-        return self._spots[x][y]
+        return self.spots[x][y]
 
     def get_item_ids(self):
         arr = []
-        for i in self._items:
+        for i in self.items:
             arr.append(i.id)
         return arr
 
     def get_neighbors(self, curr_sp, diagonal):
         neighbors = []
 
-        if curr_sp.col + 1 < self._cols:
-            neighbors.append(self._spots[curr_sp.col + 1][curr_sp.row])  # Right
+        if curr_sp.col + 1 < self.cols:
+            neighbors.append(self.spots[curr_sp.col + 1][curr_sp.row])  # Right
         if curr_sp.col - 1 >= 0:
-            neighbors.append(self._spots[curr_sp.col - 1][curr_sp.row])  # Left
-        if curr_sp.row + 1 < self._rows:
-            neighbors.append(self._spots[curr_sp.col][curr_sp.row + 1])  # Bottom
+            neighbors.append(self.spots[curr_sp.col - 1][curr_sp.row])  # Left
+        if curr_sp.row + 1 < self.rows:
+            neighbors.append(self.spots[curr_sp.col][curr_sp.row + 1])  # Bottom
         if curr_sp.row - 1 >= 0:
-            neighbors.append(self._spots[curr_sp.col][curr_sp.row - 1])  # Top
+            neighbors.append(self.spots[curr_sp.col][curr_sp.row - 1])  # Top
 
         if diagonal:
-            if curr_sp.col + 1 < self._cols and curr_sp.row - 1 >= 0:
-                neighbors.append(self._spots[curr_sp.col + 1][curr_sp.row - 1])  # Top right
+            if curr_sp.col + 1 < self.cols and curr_sp.row - 1 >= 0:
+                neighbors.append(self.spots[curr_sp.col + 1][curr_sp.row - 1])  # Top right
             if curr_sp.col - 1 >= 0 and curr_sp.row - 1 >= 0:
-                neighbors.append(self._spots[curr_sp.col - 1][curr_sp.row - 1])  # Top left
-            if curr_sp.col + 1 < self._cols and curr_sp.row + 1 < self._rows:
-                neighbors.append(self._spots[curr_sp.col + 1][curr_sp.row + 1])  # Bottom right
-            if curr_sp.col - 1 >= 0 and curr_sp.row + 1 < self._rows:
-                neighbors.append(self._spots[curr_sp.col - 1][curr_sp.row + 1])  # Bottom left
+                neighbors.append(self.spots[curr_sp.col - 1][curr_sp.row - 1])  # Top left
+            if curr_sp.col + 1 < self.cols and curr_sp.row + 1 < self.rows:
+                neighbors.append(self.spots[curr_sp.col + 1][curr_sp.row + 1])  # Bottom right
+            if curr_sp.col - 1 >= 0 and curr_sp.row + 1 < self.rows:
+                neighbors.append(self.spots[curr_sp.col - 1][curr_sp.row + 1])  # Bottom left
         return neighbors
 
     def get_cols(self):
-        return self._cols
+        return self.cols
 
     def get_rows(self):
-        return self._rows
+        return self.rows
 
     def find_spot(self, item):
-        for r in range(self._rows):
-            for c in range(self._cols):
-                if self._spots[c][r].id == item.id:
-                    return self._spots[c][r]
+        for r in range(self.rows):
+            for c in range(self.cols):
+                if self.spots[c][r].id == item.id:
+                    return self.spots[c][r]
 
     def set_spot(self, p, id):
-        if self._offset.x < p[0] < self._grid_width + self._offset.x and self._offset.y < p[1] < self._grid_height + self._offset.y:
-            col = (p[0] - int(self._offset.x)) // self._sp_width
-            row = (p[1] - int(self._offset.y)) // self._sp_width
-            spot = self._spots[col][row]
+        if self.offset.x < p[0] < self.grid_width + self.offset.x and self.offset.y < p[1] < self.grid_height + self.offset.y:
+            col = (p[0] - int(self.offset.x)) // self.sp_width
+            row = (p[1] - int(self.offset.y)) // self.sp_width
+            spot = self.spots[col][row]
             spot.id = id
 
     def clear_spot(self, p):
-        if self._offset.x < p[0] < self._grid_width + self._offset.x and self._offset.y < p[1] < self._grid_height + self._offset.y:
-            col = (p[0] - int(self._offset.x)) // self._sp_width
-            row = (p[1] - int(self._offset.y)) // self._sp_width
-            spot = self._spots[col][row]
+        if self.offset.x < p[0] < self.grid_width + self.offset.x and self.offset.y < p[1] < self.grid_height + self.offset.y:
+            col = (p[0] - int(self.offset.x)) // self.sp_width
+            row = (p[1] - int(self.offset.y)) // self.sp_width
+            spot = self.spots[col][row]
             spot.id = -1
 
     def add_item(self, item):
-        if item not in self._items:
-            item.width = self._sp_width
-            self._items.append(item)
+        if item not in self.items:
+            item.width = self.sp_width
+            self.items.append(item)
 
     def load_background(self, bg):
-        self._bg = bg
+        self.background = bg
 
     @staticmethod
     def get_distance(sp1, sp2):
