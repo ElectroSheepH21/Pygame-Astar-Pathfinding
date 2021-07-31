@@ -36,7 +36,7 @@ if __name__ == '__main__':
     spot_grid = SpotGrid(SPOT_GRID_COLUMNS, SPOT_GRID_ROWS, screen, GRID_SIZE, offset)
     spot_grid.grid_color = (0, 0, 0)
     spot_grid.grid_on = True
-    bg = pygame.image.load('images/grass.png')
+    bg = pygame.image.load('Images/grass.png')
     spot_grid.load_background(bg)
 
     start_item = StartItem()

@@ -7,4 +7,4 @@ from SpotGrid.SpotItemImg import SpotItemImg
 class BoxItem(SpotItemImg):
     def __post_init__(self):
         self.id = 7
-        self.image = pygame.image.load('images/box.png')
+        self.image = pygame.image.load('Images/box.png')
